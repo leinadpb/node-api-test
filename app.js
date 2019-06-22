@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('./app/models/user');
+const validate_env_variables = require('./app/helpers/validate_envs');
 
 // Routers
 const UserRouter = require('./app/routes/user_router');
@@ -10,9 +11,9 @@ const AuthRouter = require('./app/routes/auth_router');
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+validate_env_variables(process.env);
 
 const db = process.env.CONNECTION_STRING;
-
 mongoose
   .connect(db)
   .then(() => {
