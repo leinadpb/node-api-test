@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('./app/models/user');
 const validate_env_variables = require('./app/helpers/validate_envs');
-
-// Routers
+const socketServer = require('./ws');
 const UserRouter = require('./app/routes/user_router');
 const AuthRouter = require('./app/routes/auth_router');
 
@@ -51,8 +50,12 @@ app.use((req, res, next) => {
 app.use('/api/v1/users', UserRouter);
 app.use('/api/v1/auth', AuthRouter);
 
+const AppServer = require('http').createServer(app)
+const io = socketServer(AppServer);
 
-app.listen(process.env.PORT || "3001" ,()=>{
+app.set('mysocket', io);
+
+AppServer.listen(process.env.PORT || "3001" ,()=>{
   const port = process.env.PORT;
   console.log(`App has started: Listening on port ${!!port ? port : 3001}`);
 });
